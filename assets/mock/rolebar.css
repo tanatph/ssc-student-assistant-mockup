@@ -1,0 +1,20 @@
+/* แถบสลับบทบาท (เฉพาะเว็บทดสอบ mockup) */
+.mock-bar{position:fixed;left:12px;top:12px;z-index:9999;width:280px;display:grid;gap:8px;padding:10px 12px 12px;border-radius:14px;
+  background:#1f2937;color:#f9fafb;font:500 13px/1.4 'Noto Sans Thai',sans-serif;box-shadow:0 10px 30px rgba(0,0,0,.28);touch-action:none}
+.mock-bar.is-drag{opacity:.85;box-shadow:0 16px 40px rgba(0,0,0,.35)}
+.mock-head{display:flex;align-items:center;gap:8px;cursor:grab;user-select:none}
+.mock-bar.is-drag .mock-head{cursor:grabbing}
+.mock-head b{color:#fbbf24}.mock-head small{color:#9ca3af;font-size:11px}
+.mock-grip{cursor:grab;color:#9ca3af;font-size:16px;line-height:1;user-select:none}
+.mock-x{all:unset;margin-left:auto;cursor:pointer;width:24px;height:24px;border-radius:6px;text-align:center;color:#d1d5db;font-size:16px}
+.mock-x:hover{background:#374151}
+.mock-who{font-size:12px;color:#d1d5db}.mock-who b{color:#fff}
+.mock-row{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.mock-bar button:not(.mock-x):not(.mock-open){font:inherit;cursor:pointer;border:0;border-radius:8px;padding:7px 8px;background:#374151;color:#fff}
+.mock-bar button:not(.mock-x):not(.mock-open):hover{background:#4b5563}
+.mock-bar label{display:grid;gap:3px;font-size:12px;color:#d1d5db}
+.mock-bar select{font:inherit;font-size:13px;width:100%;padding:6px 8px;border-radius:8px;border:1px solid #4b5563;background:#111827;color:#fff}
+.mock-bar .mock-reset{background:transparent!important;color:#fca5a5!important;text-decoration:underline;padding:2px!important;justify-self:start}
+.mock-bar.is-min{width:auto;max-width:calc(100vw - 16px);display:flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px}
+.mock-open{all:unset;cursor:pointer;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:240px}
+@media (max-width:860px){.mock-bar:not(.is-min){width:min(280px,calc(100vw - 16px))}}

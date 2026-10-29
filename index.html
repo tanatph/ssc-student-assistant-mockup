@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow">
+  <title>[ทดสอบ] รับสมัครนิสิตช่วยงาน | ศูนย์กีฬาสิรินธร มศว</title>
+  <meta name="description" content="ระบบรับสมัครนิสิตช่วยงาน ศูนย์กีฬาสิรินธร คณะพลศึกษา มหาวิทยาลัยศรีนครินทรวิโรฒ">
+  <meta name="theme-color" content="#D71920">
+  <link rel="icon" href="assets/images/swu-logo.jpg">
+  <link rel="apple-touch-icon" href="assets/images/swu-logo.jpg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600&family=Prompt:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/features.css">
+</head>
+<body>
+  <div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
+  <header class="site-header">
+    <div class="container nav">
+      <a class="brand" href="#/">
+        <span class="brand-logo"><img src="assets/images/swu-logo.jpg" alt="ตรามหาวิทยาลัยศรีนครินทรวิโรฒ"></span>
+        <span class="brand-text"><b>ศูนย์กีฬาสิรินธร</b><span>รับสมัครนิสิตช่วยงาน · คณะพลศึกษา มศว</span></span>
+      </a>
+      <nav class="nav-links" id="navLinks"></nav>
+      <div class="nav-actions" id="navActions"></div>
+    </div>
+  </header>
+
+  <main id="app" tabindex="-1"></main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="foot-grid">
+        <div>
+          <div class="foot-logos"><img src="assets/images/ssc-logo.png" alt="ศูนย์กีฬาสิรินธร คณะพลศึกษา"><img src="assets/images/swu-logo.jpg" alt="มหาวิทยาลัยศรีนครินทรวิโรฒ"></div>
+          <b style="color:#fff;font-family:var(--font-head);font-size:18px">ศูนย์กีฬาสิรินธร</b>
+          <p class="mt-1">คณะพลศึกษา มหาวิทยาลัยศรีนครินทรวิโรฒ องครักษ์<br>“คิดถึงกีฬา การออกกำลังกาย นันทนาการ คิดถึงศูนย์กีฬาสิรินธร มศว”</p>
+        </div>
+        <div>
+          <b style="color:#fff">ติดตามข่าวสาร</b>
+          <div class="socials mt-1" id="socials"></div>
+        </div>
+      </div>
+      <div class="foot-bottom">
+        <span>© 2569 Sirindhorn Sports Center, SWU</span>
+        <span><a href="#/verify">ตรวจสอบใบประกาศ</a> · <a href="#/admin">สำหรับเจ้าหน้าที่</a></span>
+      </div>
+      <div class="foot-credit">
+        <img src="assets/images/ssc-logo.png" alt="">
+        <span><small>จัดทำโดย</small><b>งานบริหารศูนย์กีฬาสิรินธร</b>ศูนย์กีฬาสิรินธร คณะพลศึกษา มศว</span>
+      </div>
+    </div>
+  </footer>
+
+  <nav class="bottom-nav" id="bottomNav" aria-label="เมนูหลัก"></nav>
+  <div class="more-sheet" id="moreSheet"></div>
+  <div class="toast-wrap" id="toasts" aria-live="polite"></div>
+  <div class="tip" id="tip" role="tooltip"></div>
+
+  <!-- ลำดับสำคัญ: config → content → core → client → ui (ดู docs/DEVELOPER.md) -->
+  <script>window.UI = {}; window.EXT = { routes: {}, adminTabs: [], chromeActions: [], bindChrome: [] };</script>
+  <script src="assets/js/config.js"></script>
+  <script>CONFIG.BACKEND = 'local';</script>
+  <script src="assets/js/content.js"></script>
+  <script src="assets/js/core/util.js"></script>
+  <script src="assets/js/core/m-applications.js"></script>
+  <script src="assets/js/core/m-chat.js"></script>
+  <script src="assets/js/core/m-notify.js"></script>
+  <script src="assets/js/core/m-roster.js"></script>
+  <script src="assets/js/core/m-jobs.js"></script>
+  <script src="assets/js/core/m-attendance.js"></script>
+  <script src="assets/js/core/m-certs.js"></script>
+  <script src="assets/js/core/m-officers.js"></script>
+  <script src="assets/js/core/m-swaps.js"></script>
+  <script src="assets/js/client/seed-demo.js"></script>
+  <script src="assets/js/client/backends.js"></script>
+  <script src="assets/js/client/store.js"></script>
+  <script src="assets/js/ui/stickers.js"></script>
+  <script src="assets/js/ui/chat.js"></script>
+  <script src="assets/js/ui/work.js"></script>
+  <script src="assets/js/ui/officers.js"></script>
+  <script src="assets/js/ui/dashboard.js"></script>
+  <script src="assets/js/ui/profile.js"></script>
+  <script src="assets/js/ui/manual-data.js"></script>
+  <script src="assets/js/manual-videos.js" onerror="this.remove()"></script>
+  <script src="assets/js/ui/manual.js"></script>
+  <script src="assets/js/ui/app.js"></script>
+  <link rel="stylesheet" href="assets/mock/rolebar.css">
+  <script>window.MOCK_STAMP = "29 ต.ค. 2569 14:30";</script>
+  <script src="assets/mock/rolebar.js"></script>
+</body>
+</html>
