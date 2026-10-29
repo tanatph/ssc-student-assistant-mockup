@@ -22,6 +22,7 @@
   };
   const linkify = (s) => U.esc(s).replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener">$1</a>').replace(/\n/g, '<br>');
   const snippet = (m) => m.type === 'sticker' ? '[สติ๊กเกอร์] ' + STICKERS.label(m.sticker)
+    : m.type === 'image' ? '[รูปภาพ] ' + String(m.text || '').split('\n')[0]
     : m.type === 'card' ? ({ roster: '[ตารางเวร] ', job: '[งานเพิ่มเติม] ', swap: '[แลกเวร] ' }[m.card.kind] || '') + m.card.title
     : String(m.text || '').split('\n')[0];
 
@@ -122,6 +123,8 @@
       </div>
       ${canSend ? `<form class="composer" id="composer">
         <button type="button" class="btn btn-ghost btn-icon" id="stickerBtn" aria-label="สติ๊กเกอร์" title="สติ๊กเกอร์">${U.icon('smile')}</button>
+        <button type="button" class="btn btn-ghost btn-icon" id="imageBtn" aria-label="ส่งรูปภาพ" title="ส่งรูปภาพ (ข้อความที่พิมพ์ไว้จะเป็นคำบรรยายรูป)">${U.icon('image')}</button>
+        <input type="file" id="imageInput" accept="image/*" hidden>
         ${isAdmin ? `<button type="button" class="btn btn-ghost btn-icon ${announceMode ? 'on' : ''}" id="announceBtn" aria-label="ส่งเป็นประกาศ" title="ส่งเป็นประกาศ (ปักหมุดอัตโนมัติ)">${U.icon('megaphone')}</button>` : ''}
         <textarea id="chatInput" rows="1" placeholder="${announceMode ? 'พิมพ์ประกาศ (จะปักหมุดไว้ด้านบน)…' : 'พิมพ์ข้อความ…'}" maxlength="1000">${U.esc(draft)}</textarea>
         <button class="btn btn-icon" aria-label="ส่ง">${U.icon('send')}</button>
@@ -152,6 +155,7 @@
       if (m.type === 'deleted') body = `<div class="bubble deleted">${U.icon('trash')} ${m.deletedBy === 'admin' ? 'ข้อความถูกลบโดยแอดมิน' : 'ยกเลิกข้อความแล้ว'}</div>`;
       else if (m.type === 'card') body = cardHtml(m.card, u);
       else if (m.type === 'sticker') body = `<div class="sticker-msg">${STICKERS.svg(m.sticker)}</div>`;
+      else if (m.type === 'image') body = `<div class="img-msg"><button type="button" class="chat-img" data-view aria-label="ดูรูปขนาดเต็ม"><img ${U.fsrc(m.image)} alt="รูปภาพ" loading="lazy"></button>${m.text ? `<div class="bubble">${linkify(m.text)}</div>` : ''}</div>`;
       else if (m.type === 'announce') body = `<div class="bubble announce"><span class="ann-tag">${U.icon('megaphone')} ประกาศ</span>${linkify(m.text)}</div>`;
       else body = `<div class="bubble">${linkify(m.text)}</div>`;
       html += `<div class="msg ${mine ? 'mine' : ''} ${grouped ? 'grouped' : ''}" id="m-${m.id}" data-id="${m.id}">
@@ -173,6 +177,19 @@
     return html || `<div class="empty">${U.icon('chat')}<p>เริ่มบทสนทนาได้เลย</p></div>`;
   }
 
+  /* ดูรูปเต็มจอ — แตะที่ใดก็ได้หรือกด Esc เพื่อปิด */
+  function viewImage(src) {
+    if (!src || src.startsWith('data:image/gif')) return;   // ยังโหลดรูปไม่เสร็จ
+    const el = document.createElement('div');
+    el.className = 'img-viewer';
+    el.innerHTML = `<img src="${U.esc(src)}" alt="รูปภาพ"><button type="button" aria-label="ปิด">${U.icon('x')}</button>`;
+    const close = () => { el.remove(); removeEventListener('keydown', esc); };
+    const esc = (e) => { if (e.key === 'Escape') close(); };
+    el.onclick = close;
+    addEventListener('keydown', esc);
+    document.body.appendChild(el);
+  }
+
   function send(body) {
     try {
       Store.sendMessage(current, body);
@@ -192,7 +209,13 @@
       const t = U.$('#m-' + e.currentTarget.dataset.jump);
       if (t) { t.scrollIntoView({ behavior: 'smooth', block: 'center' }); t.classList.add('flash'); setTimeout(() => t.classList.remove('flash'), 1400); }
     });
+    // รูปโหลดเสร็จทีหลัง → ถ้าอยู่ท้ายห้องอยู่แล้ว เลื่อนลงให้เห็นรูปเต็ม
+    box.addEventListener('load', (e) => {
+      if (e.target.tagName === 'IMG' && box.scrollHeight - box.scrollTop - box.clientHeight < e.target.clientHeight + 120) box.scrollTop = box.scrollHeight;
+    }, true);
     box.onclick = (e) => {
+      const v = e.target.closest('[data-view] img');
+      if (v) return viewImage(v.src);
       const p = e.target.closest('[data-pin]'), d = e.target.closest('[data-del]');
       if (p) { Store.pinMessage(current, p.dataset.pin); renderRoom(box.scrollTop); }
       if (d && confirm('ลบข้อความนี้?')) { Store.deleteMessage(current, d.dataset.del); renderRoom(box.scrollTop); }
@@ -213,6 +236,21 @@
       announceMode = false;
       send({ type: isAnn ? 'announce' : 'text', text });
       U.$('#chatInput')?.focus();
+    };
+    /* ส่งรูป: ย่อในเบราว์เซอร์ก่อน (ด้านยาวไม่เกิน 1200px) — ระบบจริงเก็บไฟล์ใน Google Drive */
+    const pick = U.$('#imageInput');
+    U.$('#imageBtn').onclick = () => pick.click();
+    pick.onchange = async () => {
+      const f = pick.files[0];
+      pick.value = '';
+      if (!f) return;
+      if (!f.type.startsWith('image/')) return U.toast('เลือกได้เฉพาะไฟล์รูปภาพ', true);
+      try {
+        const meta = await U.readFile(f);
+        const text = input.value.trim();
+        input.value = '';
+        send({ type: 'image', image: meta.data, text });
+      } catch (err) { U.toast(err.message, true); }
     };
     U.$('#stickerBtn').onclick = () => { panel.hidden = !panel.hidden; U.$('#stickerBtn').classList.toggle('on', !panel.hidden); };
     panel.onclick = (e) => { const b = e.target.closest('[data-sticker]'); if (b) send({ type: 'sticker', sticker: b.dataset.sticker }); };

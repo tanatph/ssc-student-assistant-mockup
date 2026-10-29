@@ -228,7 +228,6 @@
           <div class="hero-orbit" aria-hidden="true"></div>
           <div class="hero-chev" aria-hidden="true">${chev()}</div>
           <div class="hero-ring">${photo('assets/images/hero.jpg', 'ป้ายศูนย์กีฬาสิรินธร')}</div>
-          <div class="hero-badge"><span class="ico">${icon('smile')}</span><div><b>บริการด้วยหลัก SGALR</b><span>Smile · Gentle · Active · Listener · Responsibility</span></div></div>
         </div>
       </div>
     </section>

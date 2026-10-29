@@ -34,9 +34,16 @@ defineCoreModule(['sendMessage', 'deleteMessage', 'pinMessage', 'setLocked', 'ma
       const u = me(), r = db().chats[roomId];
       need(S.canChat(u, roomId), 'คุณไม่มีสิทธิ์ในห้องนี้');
       need(!r.locked || u.role === 'admin', 'ห้องนี้เปิดให้แอดมินส่งข้อความเท่านั้น');
-      const type = body.type === 'sticker' ? 'sticker' : body.type === 'announce' && u.role === 'admin' ? 'announce' : 'text';
+      const type = body.type === 'sticker' ? 'sticker' : body.type === 'image' ? 'image' : body.type === 'announce' && u.role === 'admin' ? 'announce' : 'text';
       const m = { id: ctx.uid(), room: roomId, userId: u.id, ts: ctx.now(), type };
       if (type === 'sticker') m.sticker = String(body.sticker).slice(0, 20);
+      else if (type === 'image') {
+        // รูปภาพ: dataURL จากเบราว์เซอร์ (ฝั่ง server ถูกย้ายไป Google Drive เป็น "drive:<id>" ก่อนถึงตรงนี้)
+        const img = String(body.image || '');
+        need(/^data:image\/(jpeg|png|webp|gif);base64,/.test(img) && img.length <= 1500000 || ctx.env === 'server' && /^drive:[\w-]{10,}$/.test(img),'รูปภาพไม่ถูกต้องหรือใหญ่เกินไป');
+        m.image = img;
+        m.text = String(body.text || '').slice(0, 300);
+      }
       else { m.text = String(body.text || '').slice(0, 1000); need(m.text.trim(), 'ข้อความว่าง'); }
       r.messages.push(m);
       if (type === 'announce') r.pinned = m.id;   // ประกาศถูกปักหมุดอัตโนมัติ
@@ -53,7 +60,7 @@ defineCoreModule(['sendMessage', 'deleteMessage', 'pinMessage', 'setLocked', 'ma
       const u = me(), r = db().chats[roomId];
       const m = r.messages.find(x => x.id === id);
       need(m && u && (u.role === 'admin' || m.userId === u.id), 'ไม่มีสิทธิ์ลบข้อความนี้');
-      Object.assign(m, { type: 'deleted', text: '', sticker: null, deletedBy: u.role === 'admin' && m.userId !== u.id ? 'admin' : 'self' });
+      Object.assign(m, { type: 'deleted', text: '', sticker: null, image: null, deletedBy: u.role === 'admin' && m.userId !== u.id ? 'admin' : 'self' });
       if (r.pinned === id) r.pinned = null;
     },
     pinMessage(roomId, id) { need(me()?.role === 'admin', 'เฉพาะแอดมิน'); const r = db().chats[roomId]; r.pinned = r.pinned === id ? null : id; },
